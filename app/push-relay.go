@@ -89,16 +89,6 @@ func Main() {
 	if err := pr.Init(); err != nil {
 		panic(err)
 	}
-
-	//po := push.NewPushOver("", "")
-	//resp,err := po.Send(push.Message{
-	//	Title:       "his",
-	//	Message:     "another test",
-	//})
-	//if err != nil {
-	//	log.Println(err)
-	//}
-	//log.Println(resp)
 	<-util.Signal()
 	pr.Shutdown()
 }
