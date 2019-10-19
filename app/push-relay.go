@@ -85,7 +85,7 @@ func (p *PushRelay) Shutdown() {
 }
 
 func Main() {
-	pr := NewPushRelay(NewConfig())
+	pr := NewPushRelay(NewConfig(""))
 	if err := pr.Init(); err != nil {
 		panic(err)
 	}

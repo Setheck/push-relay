@@ -2,18 +2,19 @@ package app
 
 import "github.com/spf13/viper"
 
-const (
-	configName = "config"
-)
-
 type Config struct {
+	configName  string
 	configPaths []string
 
 	fresh bool
 }
 
-func NewConfig(configPaths ...string) *Config {
+func NewConfig(configName string, configPaths ...string) *Config {
+	if configName == "" {
+		configName = "config" // default
+	}
 	return &Config{
+		configName:  configName,
 		configPaths: configPaths,
 	}
 }
@@ -22,7 +23,7 @@ func (c *Config) init() error {
 	if c.fresh {
 		return nil
 	}
-	viper.SetConfigName(configName)
+	viper.SetConfigName(c.configName)
 	for _, p := range c.configPaths {
 		viper.AddConfigPath(p)
 	}

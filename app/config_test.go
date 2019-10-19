@@ -1,12 +1,13 @@
 package app
 
 import (
-	"log"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestC(t *testing.T) {
-	c := NewConfig("/home/seth/Github/push-relay")
+	c := NewConfig("testconfig", "testdata")
 	o := struct {
 		Token   string
 		UserKey string
@@ -14,5 +15,7 @@ func TestC(t *testing.T) {
 	if err := c.Load("pushover", &o); err != nil {
 		t.Fatal(err)
 	}
-	log.Println(o)
+
+	assert.Equal(t, "testToken", o.Token)
+	assert.Equal(t, "testUserKey", o.UserKey)
 }
