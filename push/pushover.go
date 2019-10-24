@@ -5,13 +5,15 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+
+	"github.com/setheck/push-relay/util"
 )
 
 type PusherSender interface {
 	Send(m interface{}) (*http.Response, error)
 }
 
-type Message struct {
+type PushoverMessage struct {
 	// Required
 	Token   string `json:"token"`
 	User    string `json:"user"`
@@ -28,13 +30,17 @@ type Message struct {
 	Timestamp   int64     `json:"timestamp,omitempty"`
 }
 
+const (
+	messagesApi = "https://api.pushover.net/1/messages.json"
+)
+
 type Pushover struct {
 	Token   string
 	UserKey string
 }
 
 func (p *Pushover) Send(m interface{}) (*http.Response, error) {
-	msg, ok := m.(Message)
+	msg, ok := m.(PushoverMessage)
 	if !ok {
 		return nil, errors.New("invalid type")
 	}
@@ -44,5 +50,5 @@ func (p *Pushover) Send(m interface{}) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	return http.Post("https://api.pushover.net/1/messages.json", "application/json", bytes.NewBuffer(b))
+	return util.PostJson(messagesApi, nil, bytes.NewBuffer(b))
 }

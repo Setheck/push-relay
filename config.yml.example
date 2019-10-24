@@ -1,6 +1,8 @@
 ---
-Api:
-  Port: 5000
-Pushover:
-  Token: <app token>
-  UserKey: <user key>
+api:
+  port: 5000
+pushover:
+  token: <app token>
+  userKey: <user key>
+pushbullet:
+  accesstoken: <access token>

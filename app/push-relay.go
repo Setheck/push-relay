@@ -39,7 +39,7 @@ func (p *PushRelay) RelayHandler(pusherName string) http.HandlerFunc {
 		data, _ := httputil.DumpRequest(r, false)
 		log.Println(strings.Fields(string(data)))
 		body, _ := ioutil.ReadAll(r.Body)
-		var m push.Message
+		var m push.PushoverMessage
 		if err := json.Unmarshal(body, &m); err != nil {
 			http.Error(w, err.Error(), 400)
 			return
@@ -47,7 +47,13 @@ func (p *PushRelay) RelayHandler(pusherName string) http.HandlerFunc {
 		if resp, err := pusher.Send(m); err != nil {
 			http.Error(w, err.Error(), 400)
 		} else {
-			w.WriteHeader(resp.StatusCode)
+			if bdy, err := ioutil.ReadAll(resp.Body); err != nil {
+				http.Error(w, err.Error(), resp.StatusCode)
+			} else {
+				if _, err := w.Write(bdy); err != nil {
+					log.Println(err)
+				}
+			}
 		}
 	}
 }
@@ -59,6 +65,11 @@ func (p *PushRelay) Init() error {
 		return err
 	}
 	p.pushers["pushover"] = po
+	var pb *push.PushBullet
+	if err := p.c.Load("pushbullet", &pb); err != nil {
+		return err
+	}
+	p.pushers["pushbullet"] = pb
 
 	if err := p.c.Load("api", &p.api); err != nil {
 		return err
